@@ -10,7 +10,9 @@ $gh = if (Get-Command gh -ErrorAction SilentlyContinue) { "gh" } elseif (Test-Pa
     throw "Install GitHub CLI: winget install GitHub.cli"
 }
 
-& $gh auth status 2>$null
+$ErrorActionPreference = "Continue"
+$null = & $gh auth status 2>&1
+$ErrorActionPreference = "Stop"
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Not logged in. Run: gh auth login"
     exit 1
