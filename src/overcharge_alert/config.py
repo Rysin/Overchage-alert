@@ -32,8 +32,8 @@ def _config_candidates() -> list[Path]:
     """
     Search order (first existing file wins):
     - Packaged exe: directory of the .exe, then default user path.
-    - Development: src/config.json when running from a repo layout (src/overcharge_alert/...),
-      then default user path.
+    - Development: package dir config.json (e.g. src/overcharge_alert/config.json), then
+      src/config.json when in a repo layout, then default user path.
     """
     default = config_path()
     if getattr(sys, "frozen", False):
@@ -42,7 +42,9 @@ def _config_candidates() -> list[Path]:
             default,
         ]
     paths: list[Path] = []
-    dev_root = Path(__file__).resolve().parent.parent
+    package_dir = Path(__file__).resolve().parent
+    paths.append(package_dir / "config.json")
+    dev_root = package_dir.parent
     if dev_root.name == "src":
         paths.append(dev_root / "config.json")
     paths.append(default)
